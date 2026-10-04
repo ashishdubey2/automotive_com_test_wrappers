@@ -1,0 +1,4 @@
+
+[peak]
+python-can>=4.2
+plin-linux>=0.0.3

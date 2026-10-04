@@ -10,6 +10,12 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+peak = [
+    "python-can>=4.2",
+    "plin-linux>=0.0.3",
+]
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 

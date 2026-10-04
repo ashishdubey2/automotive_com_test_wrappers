@@ -4,6 +4,9 @@ Version: 0.1.0
 Summary: Python wrappers for testing automotive communication modules
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+Provides-Extra: peak
+Requires-Dist: python-can>=4.2; extra == "peak"
+Requires-Dist: plin-linux>=0.0.3; extra == "peak"
 
 # Automotive Communication Test Wrappers
 
@@ -18,9 +21,8 @@ they do not assume a particular vehicle interface or ECU.
 python -m pip install -e .
 ```
 
-The package uses only the Python standard library. Hardware-specific adapters
-can implement the transport protocols in `can.py` and `lin.py`; no CAN, LIN, or
-serial hardware driver is bundled.
+The generic wrappers use only the Python standard library. Optional PEAK
+adapters are available for PCAN and PLIN devices on Linux.
 
 ## Examples
 
@@ -45,6 +47,39 @@ identifiers, including PDU1 destination addresses.
 Implement `LinTransport.send(frame)` and `LinTransport.receive(identifier,
 timeout=...)`. `LinTester` calculates protected identifiers and classic or
 enhanced checksums, and validates received frames.
+
+### PEAK PCAN and PLIN on Linux
+
+Install the package with its optional PEAK dependencies:
+
+```sh
+python -m pip install -e ".[peak]"
+```
+
+Install PEAK's Linux CAN and LIN drivers separately. The PCAN Linux driver
+exposes CAN devices through SocketCAN; configure the bitrate and interface
+state with the Linux network tools for your interface (commonly `can0`) before
+opening the adapter. The LIN driver exposes character devices such as
+`/dev/plin0`; make sure the user running the test has permission to access it.
+
+```python
+from automotive_com_test_wrappers.can import CanFrame, CanTester
+from automotive_com_test_wrappers.lin import LinTester
+from automotive_com_test_wrappers.peak import PeakCanTransport, PeakLinTransport
+
+with PeakCanTransport(channel="can0") as can_transport:
+    can_tester = CanTester(can_transport)
+    can_tester.transmit(CanFrame(0x123, b"\x01\x02"))
+
+with PeakLinTransport(interface="/dev/plin0", baudrate=19200) as lin_transport:
+    lin_tester = LinTester(lin_transport)
+    lin_tester.transmit(identifier=0x12, data=b"\x01\x02")
+```
+
+`PeakLinTransport` defaults to LIN master mode. Pass `mode="slave"` to operate
+as a slave. The adapter communicates with the PEAK Linux LIN character-device
+API; install the PEAK LIN driver before use. Hardware integration tests require
+the corresponding PEAK adapter and bus.
 
 ### TCP and UDP
 
