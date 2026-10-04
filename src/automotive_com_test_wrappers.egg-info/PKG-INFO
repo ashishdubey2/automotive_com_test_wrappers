@@ -1,3 +1,10 @@
+Metadata-Version: 2.4
+Name: automotive-com-test-wrappers
+Version: 0.1.0
+Summary: Python wrappers for testing automotive communication modules
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+
 # Automotive Communication Test Wrappers
 
 A small Python package for exercising embedded automotive communication
