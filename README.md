@@ -100,3 +100,6 @@ Run the test suite with:
 ```sh
 python -m unittest discover -s tests -v
 ```
+
+For Linux `vcan` and localhost integration testing (including test boundaries
+and byte-level message layouts), see [Virtual communication testing](docs/virtual-testing.md).
